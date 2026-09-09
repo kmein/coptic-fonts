@@ -10,7 +10,7 @@
   #v(-6pt)
   #text(size: 9.5pt, style: "italic")[
     a revival of the Coptic type of Bentley Layton's #smallcaps[A Coptic Grammar] \
-    traced from averaged 600 dpi page scans · v1.1, smoothed, with widened stroke contrast
+    traced from averaged 600 dpi page scans · v1.2, smoothed and cut 8 % lighter than the page
   ]
 ]
 
@@ -89,12 +89,12 @@ harvest, which used only pp. 60–540:
   table.hline(stroke: 0.4pt),
   [], [*this font*], [*best installed*], [*ceiling*],
   table.hline(stroke: 0.4pt),
-  [glyph-shape agreement], [0.853], [0.816], [\~0.95],
-  [with proportion], [0.844], [0.806], [],
+  [glyph-shape agreement], [0.859], [0.816], [\~0.95],
+  [with proportion], [0.850], [0.806], [],
   [identity rate], [1.00], [0.90], [],
-  [stroke weight vs page], [1.08], [0.69], [],
+  [stroke weight vs page], [0.92], [0.69], [],
   [set width vs page], [0.968], [0.91], [],
-  [stroke contrast (stem ÷ bar)], [6.9], [—], [],
+  [ⲟ stem ÷ bar (page: 2.68)], [2.86], [1.9], [],
   table.hline(stroke: 0.4pt),
 )
 
@@ -103,8 +103,9 @@ harvest, which used only pp. 60–540:
   Best installed = CS Koptos Manuscript Unicode, the closest of the 27 Coptic-capable
   fonts on this machine. Ceiling = what a true match scores against a scan of this
   quality. Identity rate = share of the 30 glyphs closer to their own printed
-  counterpart than to any other letter. The printed type's own stroke contrast is 4.4
-  on this measure and IFAO N Copte's 10.2; v1.0 (faithful, 0.874) is tagged in git.
+  counterpart than to any other letter. Weight 0.92 = 8 % less ink than the printed
+  impression, with the page's own thick/thin ratio kept; v1.0 (as printed, 0.874) is
+  tagged in git.
 ]
 
 #v(10pt)

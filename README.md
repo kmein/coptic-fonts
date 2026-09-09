@@ -31,12 +31,14 @@ the letterforms in a book, not any font file.
    averaged, with outliers (merged or broken glyphs) rejected against a first-pass
    average. **7,012 instances** survived into the final templates. The average
    recovers far more detail than any single instance carries.
-4. **Refine (v1.1).** Templates are Gaussian-smoothed (σ = 4 px at letter height 256)
-   and the stroke contrast is widened: the shape is grown along x and shrunk along y by
-   7 px, which thickens vertical stems and thins horizontal bars while leaving
-   diagonals alone, then the ink box is restored so proportions do not drift
-   (`src/refine.py`). Layton's printed type has a thick/thin ratio of about 1.45; the
-   font now sits roughly halfway between that and IFAO N Copte.
+4. **Refine.** Templates are Gaussian-smoothed (σ = 4 px at letter height 256) to take
+   out press noise, then lightened by 16 % of each stroke's own width via the distance
+   transform (`src/refine.py`, `lighten`). Because the cut is proportional rather than
+   a fixed erosion, thick and thin strokes lose the same fraction and the page's
+   contrast is kept — this is the same design at a lighter weight, about 8 % less ink
+   than the printed impression, which is roughly the ink gain a press adds. A
+   contrast-widening option (`CONTRAST`) exists but ships at 0; v1.1 used it and is
+   tagged for reference.
 5. **Trace and simplify.** Templates upsampled 2×, thresholded, traced with potrace,
    then simplified in FontForge within a 4-unit error budget (`src/simplify.py`) —
    near-straight runs become true lines, wobble becomes single curves, and extrema get
@@ -75,23 +77,21 @@ preceding letter.
 Scored against the alphabet table, which is **held out**: it is on page 30 of the
 PDF, while the harvest drew only on pages 60–540.
 
-| | v1.1 (this font) | v1.0 (faithful) | CS Koptos (best installed) | ceiling |
+| | v1.2 (this font) | v1.0 (as printed) | CS Koptos (best installed) | ceiling |
 |---|---|---|---|---|
-| shape agreement | **0.853** | 0.874 | 0.816 | ~0.95 |
-| with proportion | **0.844** | 0.867 | 0.806 | |
+| shape agreement | **0.859** | 0.874 | 0.816 | ~0.95 |
+| with proportion | **0.850** | 0.867 | 0.806 | |
 | identity rate | **1.00** | 1.00 | 0.90 | |
-| stroke weight vs page | **1.08** | 1.01 | 0.69 | |
+| stroke weight vs page | **0.92** | 1.01 | 0.69 | |
 | width vs page | **0.97** | 0.97 | 0.95 | |
+| ⲟ stem ÷ bar | **2.86** | 2.68 | 1.9 | |
 
 Identity rate = fraction of the 30 glyphs that match their own printed counterpart
-better than any other letter. v1.0 (git `b56f7ad`) reproduces the page as printed;
-v1.1 deliberately departs from it in stroke contrast and smoothness, which is why its
-agreement score is a little lower. Both remain well ahead of any installed font.
-
-Stroke contrast, measured as stem width ÷ bar thickness at the mid cross-section
-(letter height 256): ⲟ 2.7 → 4.3, ⲡ 2.2 → 4.3, ⲏ 7.2 → 11.9; mean over ⲟ ⲉ ⲡ ⲏ
-4.4 → 6.9 (IFAO N Copte: 10.2). The x-growth adds slightly more ink than the y-shrink
-removes, so v1.1 prints about 7 % heavier than the page.
+better than any other letter. v1.0 (tag `v1.0`) reproduces the page as printed, ink
+gain included; v1.2 is that design smoothed and cut 8 % lighter, and the small drop in
+agreement is the lighter weight being compared against the heavier printed ink. Both
+remain well ahead of any installed font. Smoothing on its own costs nothing: the
+smoothed-but-unlightened build scores 0.875.
 Set at matched letter height, the word ⲡⲟⲛⲏⲣⲟⲥ measures 0.968× the printed setting
 (CS Koptos: 0.91×).
 
@@ -105,9 +105,9 @@ Set at matched letter height, the word ⲡⲟⲛⲏⲣⲟⲥ measures 0.968× th
   and widest (ⲱ, ϣ) letters.
 - Regular weight only. No italic, no bold, no digits, and no punctuation beyond
   hyphen and space.
-- The contrast increase is a design choice, not a property of Layton's type. The
-  faithful version is tagged in git as v1.0; rebuild with `CONTRAST = 0` in
-  `src/build_font.py` to get it back.
+- Lightening is proportional, but the local-width estimate is a windowed maximum,
+  so a thin bar that joins a thick stem loses slightly more than its share: ⲟ's
+  contrast drifts from 2.68 to 2.86. Set `LIGHTEN=0` for the printed weight.
 
 ## Rebuilding
 
@@ -123,8 +123,9 @@ Render page scans to `pages/`, then run `src/` in order: `segref.py` (reference
 alphabet) → `harvest.py` → `average.py` → `spacing.py`, `bars.py`, `overline.py` →
 `build_font.py` → `fontforge -lang=py -script src/simplify.py LaytonCoptic-Regular.otf 4`
 (needs `nixpkgs#fontforge`; regenerates both OTF and TTF). `score4.py` reproduces the
-verification numbers. Smoothing and contrast are the `SIGMA` / `CONTRAST` constants at
-the top of `build_font.py`; the simplify error budget is the script's second argument.
+verification numbers. `build_font.py` reads `SIGMA` (smoothing, 4), `LIGHTEN` (0.16),
+`CONTRAST` (0) and `OUT` (file stem) from the environment; the simplify error budget is
+that script's second argument.
 
 `data/` holds the intermediate artefacts, so the font can be rebuilt from
 `templates.npz` without re-harvesting.

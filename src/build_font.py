@@ -10,13 +10,17 @@ import refine as RF
 import score as S
 
 BASE, TARGET = 700, 256
-SIGMA    = 4.0    # smoothing of the averaged template before tracing
-CONTRAST = 7      # px of x-growth / y-shrink: widens the thick/thin difference
+import os
+SIGMA    = float(os.environ.get("SIGMA", 4.0))   # smoothing of the averaged template before tracing
+CONTRAST = float(os.environ.get("CONTRAST", 0))  # px of x-growth / y-shrink: widens thick/thin (0 = as printed)
+WEIGHT   = float(os.environ.get("WEIGHT", 0))    # px uniform stroke change (changes contrast)
+LIGHTEN  = float(os.environ.get("LIGHTEN", 0.16))   # fraction of stroke width removed, contrast preserved
+OUT      = os.environ.get("OUT", "LaytonCoptic-Regular")
 LETTER_H = 620                      # letter height in font units
 K = LETTER_H / TARGET
 UPEM = 1000
 FAMILY, STYLE = "Layton Coptic", "Regular"
-VERSION = "1.100"
+VERSION = "1.200"
 
 CP = {   # letter -> (small, capital) codepoints; the type is unicase, one outline serves both
  "alpha":(0x2C81,0x2C80), "beta":(0x2C83,0x2C82), "gamma":(0x2C85,0x2C84), "delta":(0x2C87,0x2C86),
@@ -90,7 +94,7 @@ GAP = sp["gap"]
 shapes, widths, LSB = {}, {}, {}
 for name in S.LETTERS:
     if name not in tpl: continue
-    contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST), name, opttol="0.3", alphamax="1.2")
+    contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST, weight=WEIGHT, lighten=LIGHTEN), name, outdir="trace_"+OUT, opttol="0.3", alphamax="1.2")
     contours = TR.polish(contours, flat_tol=0.6, angle_tol=1.2, snap_tol=1.2, min_len=25)
     xs = [p[0] for c in contours for seg in c for p in seg[1:]]
     ink_l, ink_r = min(xs), max(xs); w = ink_r - ink_l
@@ -165,8 +169,8 @@ def cff_pen(g):
     return T2CharStringPen(adv_units[g], None)
 glyphs = build(cff_pen, lambda pen,g: pen.getCharString())
 setup(fb, glyphs, False)
-fb.save("LaytonCoptic-Regular.otf")
-print("wrote LaytonCoptic-Regular.otf")
+fb.save(OUT+".otf")
+print("wrote "+OUT+".otf")
 
 # TTF (quadratic)
 fb2 = FontBuilder(UPEM, isTTF=True)
@@ -179,5 +183,5 @@ def tt_finish(pen, g):
 CFF_MODE[0]=False
 glyphs2 = build(tt_pen, tt_finish)
 setup(fb2, glyphs2, True)
-fb2.save("LaytonCoptic-Regular.ttf")
-print("wrote LaytonCoptic-Regular.ttf")
+fb2.save(OUT+".ttf")
+print("wrote "+OUT+".ttf")
