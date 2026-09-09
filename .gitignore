@@ -1,0 +1,4 @@
+# harvest intermediates (page scans and per-instance data are large and regenerable)
+pages/
+*.pkl
+trace/
