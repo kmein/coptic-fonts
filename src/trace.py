@@ -6,7 +6,7 @@ from PIL import Image
 POTRACE = "/nix/store/mnnr6ch3xmn9i594w5lrv4ggg1w14n7n-potrace-1.16/bin/potrace"
 UP = 2                      # upsample before thresholding: keeps the superresolution detail
 
-def trace_template(avg, tag, outdir="trace"):
+def trace_template(avg, tag, outdir="trace", opttol="0.6", alphamax="1.0"):
     os.makedirs(outdir, exist_ok=True)
     H,W = avg.shape
     big = np.asarray(Image.fromarray((avg*255).astype(np.uint8))
@@ -20,7 +20,7 @@ def trace_template(avg, tag, outdir="trace"):
     pbm = f"{outdir}/{tag}.pbm"
     Image.fromarray((~crop).astype(np.uint8)*255).convert("1").save(pbm)
     svg = f"{outdir}/{tag}.svg"
-    subprocess.run([POTRACE,"-s","-o",svg,"-t","6","-a","1.0","-O","0.2","-u","20",pbm], check=True)
+    subprocess.run([POTRACE,"-s","-o",svg,"-t","6","-a",alphamax,"-O",opttol,"-u","20",pbm], check=True)
     return parse_svg(svg, x0, y0), (x0,y0,crop.shape)
 
 NUM = re.compile(r"-?\d*\.?\d+(?:e-?\d+)?")
@@ -67,3 +67,72 @@ def parse_svg(path, ox, oy):
             else: i+=1
         if cont: contours.append(cont)
     return contours
+
+
+# ---------------------------------------------------------------- outline polish
+import math
+
+def _dist_to_line(p, a, b):
+    (px,py),(ax,ay),(bx,by) = p,a,b
+    dx,dy = bx-ax, by-ay
+    L = math.hypot(dx,dy)
+    if L < 1e-9: return math.hypot(px-ax, py-ay)
+    return abs(dy*(px-ax) - dx*(py-ay))/L
+
+def polish(contours, flat_tol=1.1, angle_tol=4.0, snap_tol=2.2, min_len=1.5):
+    """Curves that are effectively straight become lines; collinear lines merge;
+    near-horizontal / near-vertical lines snap true. Shared nodes move together, and
+    the control point next to a moved node moves with it so curves stay attached."""
+    out=[]
+    for c in contours:
+        if len(c) < 2: continue
+        nodes=[seg[-1] for seg in c]                     # nodes[i] = end of segment i
+        kinds=[c[i][0] for i in range(len(c))]
+        ctrl ={i:(c[i][1], c[i][2]) for i in range(len(c)) if c[i][0]=="c"}
+        # 1. straighten near-flat cubics
+        for i in range(1, len(c)):
+            if kinds[i]=="c":
+                a,b = nodes[i-1], nodes[i]
+                c1,c2 = ctrl[i]
+                if max(_dist_to_line(c1,a,b), _dist_to_line(c2,a,b)) < flat_tol:
+                    kinds[i]="l"; ctrl.pop(i, None)
+        # 2. snap near-axis lines (longest first so short segments do not fight)
+        segs=[i for i in range(1,len(c)) if kinds[i]=="l"]
+        segs.sort(key=lambda i: -math.hypot(nodes[i][0]-nodes[i-1][0], nodes[i][1]-nodes[i-1][1]))
+        moved={}
+        for i in segs:
+            a,b = nodes[i-1], nodes[i]
+            dx,dy = b[0]-a[0], b[1]-a[1]
+            L=math.hypot(dx,dy)
+            if L < min_len: continue
+            ang = abs(math.degrees(math.atan2(dy,dx))) % 180
+            if min(ang, 180-ang) < snap_tol:                      # horizontal
+                y=(a[1]+b[1])/2
+                moved[i-1]=(a[0],y); moved[i]=(b[0],y)
+            elif abs(ang-90) < snap_tol:                          # vertical
+                x=(a[0]+b[0])/2
+                moved[i-1]=(x,a[1]); moved[i]=(x,b[1])
+        for idx,p in moved.items():
+            old=nodes[idx]; d=(p[0]-old[0], p[1]-old[1])
+            nodes[idx]=p
+            if idx+1 < len(c) and (idx+1) in ctrl:                # control after the node
+                c1,c2=ctrl[idx+1]; ctrl[idx+1]=((c1[0]+d[0], c1[1]+d[1]), c2)
+            if idx in ctrl:                                       # control before the node
+                c1,c2=ctrl[idx]; ctrl[idx]=(c1, (c2[0]+d[0], c2[1]+d[1]))
+        # 3. merge consecutive near-collinear lines
+        keep=[0]
+        for i in range(1, len(c)):
+            if (kinds[i]=="l" and keep and kinds[keep[-1]]=="l" and len(keep)>1):
+                a,b,d = nodes[keep[-2]], nodes[keep[-1]], nodes[i]
+                a1=math.degrees(math.atan2(b[1]-a[1], b[0]-a[0]))
+                a2=math.degrees(math.atan2(d[1]-b[1], d[0]-b[0]))
+                turn=abs((a1-a2+180)%360-180)
+                if turn < angle_tol:
+                    keep[-1]=i
+                    continue
+            keep.append(i)
+        new=[("m", nodes[0])]
+        for i in keep[1:]:
+            new.append(("l", nodes[i]) if kinds[i]=="l" else ("c", ctrl[i][0], ctrl[i][1], nodes[i]))
+        out.append(new)
+    return out

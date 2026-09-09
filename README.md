@@ -31,8 +31,17 @@ the letterforms in a book, not any font file.
    averaged, with outliers (merged or broken glyphs) rejected against a first-pass
    average. **7,012 instances** survived into the final templates. The average
    recovers far more detail than any single instance carries.
-4. **Trace.** Templates upsampled 2×, thresholded, traced with potrace.
-5. **Metrics from the page, not invented.** Advance widths are the median of
+4. **Refine (v1.1).** Templates are Gaussian-smoothed (σ = 4 px at letter height 256)
+   and the stroke contrast is widened: the shape is grown along x and shrunk along y by
+   7 px, which thickens vertical stems and thins horizontal bars while leaving
+   diagonals alone, then the ink box is restored so proportions do not drift
+   (`src/refine.py`). Layton's printed type has a thick/thin ratio of about 1.45; the
+   font now sits roughly halfway between that and IFAO N Copte.
+5. **Trace and simplify.** Templates upsampled 2×, thresholded, traced with potrace,
+   then simplified in FontForge within a 4-unit error budget (`src/simplify.py`) —
+   near-straight runs become true lines, wobble becomes single curves, and extrema get
+   on-curve points. 8,378 outline points became 2,238.
+6. **Metrics from the page, not invented.** Advance widths are the median of
    **10,975 measured adjacent letter pairs**. Supralinear stroke and hyphen
    dimensions and heights were measured from 834 and 716 instances respectively.
 
@@ -66,16 +75,23 @@ preceding letter.
 Scored against the alphabet table, which is **held out**: it is on page 30 of the
 PDF, while the harvest drew only on pages 60–540.
 
-| | this font | CS Koptos (best installed) | ceiling |
-|---|---|---|---|
-| shape agreement | **0.874** | 0.816 | ~0.95 |
-| with proportion | **0.867** | 0.806 | |
-| identity rate | **1.00** | 0.90 | |
-| stroke weight vs page | **1.01** | 0.69 | |
-| width vs page | **0.97** | 0.95 | |
+| | v1.1 (this font) | v1.0 (faithful) | CS Koptos (best installed) | ceiling |
+|---|---|---|---|---|
+| shape agreement | **0.853** | 0.874 | 0.816 | ~0.95 |
+| with proportion | **0.844** | 0.867 | 0.806 | |
+| identity rate | **1.00** | 1.00 | 0.90 | |
+| stroke weight vs page | **1.08** | 1.01 | 0.69 | |
+| width vs page | **0.97** | 0.97 | 0.95 | |
 
 Identity rate = fraction of the 30 glyphs that match their own printed counterpart
-better than any other letter. Every letter scores above 0.80; median 0.873.
+better than any other letter. v1.0 (git `b56f7ad`) reproduces the page as printed;
+v1.1 deliberately departs from it in stroke contrast and smoothness, which is why its
+agreement score is a little lower. Both remain well ahead of any installed font.
+
+Stroke contrast, measured as stem width ÷ bar thickness at the mid cross-section
+(letter height 256): ⲟ 2.7 → 4.3, ⲡ 2.2 → 4.3, ⲏ 7.2 → 11.9; mean over ⲟ ⲉ ⲡ ⲏ
+4.4 → 6.9 (IFAO N Copte: 10.2). The x-growth adds slightly more ink than the y-shrink
+removes, so v1.1 prints about 7 % heavier than the page.
 Set at matched letter height, the word ⲡⲟⲛⲏⲣⲟⲥ measures 0.968× the printed setting
 (CS Koptos: 0.91×).
 
@@ -89,13 +105,13 @@ Set at matched letter height, the word ⲡⲟⲛⲏⲣⲟⲥ measures 0.968× th
   and widest (ⲱ, ϣ) letters.
 - Regular weight only. No italic, no bold, no digits, and no punctuation beyond
   hyphen and space.
-- Traced from a scan, so the outlines carry a little of the press's ink spread. The
-  weight ratio of 1.01 means it matches the *printed* page, which is marginally
-  heavier than the type's drawn form.
+- The contrast increase is a design choice, not a property of Layton's type. The
+  faithful version is tagged in git as v1.0; rebuild with `CONTRAST = 0` in
+  `src/build_font.py` to get it back.
 
 ## Rebuilding
 
-Needs `poppler-utils`, `potrace`, and python with `pillow numpy scipy fonttools`:
+Needs `poppler-utils`, `potrace`, `fontforge`, and python with `pillow numpy scipy fonttools`:
 
 ```
 nix shell nixpkgs#poppler-utils nixpkgs#potrace
@@ -105,7 +121,10 @@ nix build --impure --expr 'let pkgs = import (builtins.getFlake "nixpkgs") { sys
 
 Render page scans to `pages/`, then run `src/` in order: `segref.py` (reference
 alphabet) → `harvest.py` → `average.py` → `spacing.py`, `bars.py`, `overline.py` →
-`build_font.py`. `score4.py` reproduces the verification numbers.
+`build_font.py` → `fontforge -lang=py -script src/simplify.py LaytonCoptic-Regular.otf 4`
+(needs `nixpkgs#fontforge`; regenerates both OTF and TTF). `score4.py` reproduces the
+verification numbers. Smoothing and contrast are the `SIGMA` / `CONTRAST` constants at
+the top of `build_font.py`; the simplify error budget is the script's second argument.
 
 `data/` holds the intermediate artefacts, so the font can be rebuilt from
 `templates.npz` without re-harvesting.

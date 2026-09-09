@@ -6,14 +6,17 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.pens.cu2quPen import Cu2QuPen
 import trace as TR
+import refine as RF
 import score as S
 
 BASE, TARGET = 700, 256
+SIGMA    = 4.0    # smoothing of the averaged template before tracing
+CONTRAST = 7      # px of x-growth / y-shrink: widens the thick/thin difference
 LETTER_H = 620                      # letter height in font units
 K = LETTER_H / TARGET
 UPEM = 1000
 FAMILY, STYLE = "Layton Coptic", "Regular"
-VERSION = "1.000"
+VERSION = "1.100"
 
 CP = {   # letter -> (small, capital) codepoints; the type is unicase, one outline serves both
  "alpha":(0x2C81,0x2C80), "beta":(0x2C83,0x2C82), "gamma":(0x2C85,0x2C84), "delta":(0x2C87,0x2C86),
@@ -87,7 +90,8 @@ GAP = sp["gap"]
 shapes, widths, LSB = {}, {}, {}
 for name in S.LETTERS:
     if name not in tpl: continue
-    contours,_ = TR.trace_template(tpl[name], name)
+    contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST), name, opttol="0.3", alphamax="1.2")
+    contours = TR.polish(contours, flat_tol=0.6, angle_tol=1.2, snap_tol=1.2, min_len=25)
     xs = [p[0] for c in contours for seg in c for p in seg[1:]]
     ink_l, ink_r = min(xs), max(xs); w = ink_r - ink_l
     a = sp["adv"].get(name)
