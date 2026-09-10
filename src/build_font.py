@@ -36,6 +36,9 @@ CP = {   # letter -> (small, capital) codepoints; the type is unicase, one outli
  "kyima":(0x03ED,0x03EC), "ti":(0x03EF,0x03EE),
 }
 GNAME = {n:"uni%04X"%CP[n][0] for n in CP}
+# marks traced from the page like the letters, if the face has templates for them
+MARKS = {"dhyphen": 0x2E17}      # double oblique hyphen: Layton's prepersonal-state sign (ⲥⲟⲧⲡ⸗)
+for n,cp in MARKS.items(): GNAME[n] = "uni%04X"%cp
 
 def signed_area(pts):
     a=0.0
@@ -95,7 +98,7 @@ meta = json.load(open(os.path.join(face.DATA, "template_meta.json")))
 sp = json.load(open(os.path.join(face.DATA, "spacing.json"))); bars = json.load(open(os.path.join(face.DATA, "bars.json")))
 GAP = sp["gap"]
 shapes, widths, LSB = {}, {}, {}
-for name in S.LETTERS:
+for name in S.LETTERS + [m for m in MARKS if m in tpl]:
     if name not in tpl: continue
     contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST, weight=WEIGHT, lighten=LIGHTEN), name, outdir=os.path.join(face.WORK, "trace", OUT), opttol="0.3", alphamax="1.2")
     contours = TR.polish(contours, flat_tol=0.6, angle_tol=1.2, snap_tol=1.2, min_len=25)
@@ -114,10 +117,12 @@ for name in S.LETTERS:
 typ_adv = float(np.median(list(widths.values())))
 
 # ---------- build ----------
-order = [".notdef","space","hyphen","uni0305"] + [GNAME[n] for n in S.LETTERS if n in shapes]
+order = [".notdef","space","hyphen","uni0305"] + [GNAME[n] for n in S.LETTERS if n in shapes] \
+        + [GNAME[n] for n in MARKS if n in shapes]
 cmap = {0x20:"space", 0x2D:"hyphen", 0x0305:"uni0305"}
 for n in shapes:
-    cmap[CP[n][0]] = GNAME[n]; cmap[CP[n][1]] = GNAME[n]
+    if n in MARKS: cmap[MARKS[n]] = GNAME[n]
+    else: cmap[CP[n][0]] = GNAME[n]; cmap[CP[n][1]] = GNAME[n]
 ov, hy = bars["overline"], bars["hyphen"]
 adv_units = {".notdef": round(0.5*LETTER_H), "space": round(TARGET*K),
              "hyphen": round((hy["ln"]+GAP)*K), "uni0305": 0}
@@ -169,6 +174,7 @@ def setup(fb, glyphs, is_ttf):
                 usWinAscent=1000, usWinDescent=270, sCapHeight=LETTER_H, sxHeight=LETTER_H,
                 achVendID="LYTN", fsType=0)
     fb.setupPost(isFixedPitch=1 if MONO else 0)
+    fb.font["head"].fontRevision = float(VERSION)
     if MONO: fb.font["OS/2"].panose.bProportion = 9
 
 # OTF (CFF, cubic)

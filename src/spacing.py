@@ -7,6 +7,8 @@ import score as S
 TARGET = 256
 
 insts = pickle.load(open(os.path.join(face.WORK, "instances.pkl"),"rb"))
+MS = face.CFG.get("metrics_source")            # metrics come from one printed setting only
+if MS: insts = [g for g in insts if g.get("source","") == MS]
 lines = {}
 for g in insts: lines.setdefault((g["page"], g["base"]), []).append(g)
 adv, gaps = {}, []
@@ -33,7 +35,7 @@ json.dump(dict(gap=gap_med, adv=out, pitch=pitch, spread=spread), open(os.path.j
 
 # --- bars: supralinear stroke and hyphen, measured from the pages
 th, ln, above, mid = [], [], [], []
-for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["spacing_glob"])))[:6]:
+for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["spacing_glob"]))):
     a = np.asarray(Image.open(p).convert("L")); ink = a<128
     lab,n = ndimage.label(ink); objs = ndimage.find_objects(lab)
     hs = [o[0].stop-o[0].start for o in objs if 8<=o[0].stop-o[0].start<=200]

@@ -5,7 +5,7 @@ from PIL import Image
 from scipy import ndimage
 TARGET=256
 gaps, bottoms, ths, lns = [], [], [], []
-for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["bars_glob"])))[:10]:
+for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["bars_glob"]))):
     a=np.asarray(Image.open(p).convert("L")); ink=a<128
     lab,n=ndimage.label(ink); objs=ndimage.find_objects(lab)
     hs=[o[0].stop-o[0].start for o in objs if 8<=o[0].stop-o[0].start<=200]

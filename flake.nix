@@ -28,7 +28,7 @@
     in {
       packages = forAll (pkgs: rec {
         layton-coptic = mkFace pkgs {
-          pname = "layton-coptic"; version = "1.2"; face = "layton";
+          pname = "layton-coptic"; version = "1.3"; face = "layton";
           description = "Revival of the Coptic type in Bentley Layton's A Coptic Grammar (2000)";
         };
         lambdin-coptic = mkFace pkgs {

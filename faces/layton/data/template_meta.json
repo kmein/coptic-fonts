@@ -1,332 +1,645 @@
 {
  "alpha": {
-  "n": 402,
-  "pool": 1969,
+  "n": 639,
+  "pool": 7703,
+  "sources": {
+   "grammar": {
+    "n": 498,
+    "pool": 7562
+   },
+   "zost": {
+    "n": 141,
+    "pool": 141
+   }
+  },
   "top": 444,
-  "bottom": 700,
-  "left": 214,
-  "right": 486,
-  "height": 256,
-  "width": 272,
-  "desc": 0
+  "bottom": 699,
+  "left": 209,
+  "right": 491,
+  "height": 255,
+  "width": 282,
+  "desc": -1
  },
  "beta": {
-  "n": 284,
-  "pool": 441,
-  "top": 439,
-  "bottom": 692,
+  "n": 528,
+  "pool": 1800,
+  "sources": {
+   "grammar": {
+    "n": 500,
+    "pool": 1772
+   },
+   "zost": {
+    "n": 28,
+    "pool": 28
+   }
+  },
+  "top": 440,
+  "bottom": 694,
   "left": 239,
   "right": 461,
-  "height": 253,
+  "height": 254,
   "width": 222,
-  "desc": -8
+  "desc": -6
  },
  "gamma": {
-  "n": 78,
-  "pool": 175,
+  "n": 508,
+  "pool": 553,
+  "sources": {
+   "grammar": {
+    "n": 500,
+    "pool": 545
+   },
+   "zost": {
+    "n": 8,
+    "pool": 8
+   }
+  },
   "top": 451,
-  "bottom": 700,
-  "left": 253,
-  "right": 447,
-  "height": 249,
-  "width": 194,
-  "desc": 0
+  "bottom": 699,
+  "left": 252,
+  "right": 449,
+  "height": 248,
+  "width": 197,
+  "desc": -1
  },
  "delta": {
-  "n": 102,
-  "pool": 142,
-  "top": 444,
-  "bottom": 700,
-  "left": 166,
-  "right": 533,
+  "n": 503,
+  "pool": 531,
+  "sources": {
+   "grammar": {
+    "n": 489,
+    "pool": 517
+   },
+   "zost": {
+    "n": 14,
+    "pool": 14
+   }
+  },
+  "top": 443,
+  "bottom": 699,
+  "left": 163,
+  "right": 537,
   "height": 256,
-  "width": 367,
-  "desc": 0
+  "width": 374,
+  "desc": -1
  },
  "epsilon": {
-  "n": 298,
-  "pool": 1619,
-  "top": 444,
-  "bottom": 700,
+  "n": 690,
+  "pool": 8201,
+  "sources": {
+   "grammar": {
+    "n": 497,
+    "pool": 8004
+   },
+   "zost": {
+    "n": 193,
+    "pool": 197
+   }
+  },
+  "top": 437,
+  "bottom": 704,
   "left": 211,
-  "right": 489,
-  "height": 256,
-  "width": 278,
-  "desc": 0
+  "right": 490,
+  "height": 267,
+  "width": 279,
+  "desc": 4
  },
  "zeta": {
-  "n": 10,
-  "pool": 11,
-  "top": 416,
-  "bottom": 729,
-  "left": 222,
-  "right": 478,
-  "height": 313,
-  "width": 256,
-  "desc": 29
+  "n": 61,
+  "pool": 61,
+  "sources": {
+   "grammar": {
+    "n": 61,
+    "pool": 61
+   }
+  },
+  "top": 412,
+  "bottom": 733,
+  "left": 219,
+  "right": 480,
+  "height": 321,
+  "width": 261,
+  "desc": 33
  },
  "eta": {
-  "n": 344,
-  "pool": 433,
+  "n": 534,
+  "pool": 1808,
+  "sources": {
+   "grammar": {
+    "n": 497,
+    "pool": 1771
+   },
+   "zost": {
+    "n": 37,
+    "pool": 37
+   }
+  },
   "top": 444,
-  "bottom": 695,
-  "left": 222,
-  "right": 478,
-  "height": 251,
-  "width": 256,
-  "desc": -5
+  "bottom": 697,
+  "left": 223,
+  "right": 476,
+  "height": 253,
+  "width": 253,
+  "desc": -3
  },
  "theta": {
-  "n": 66,
-  "pool": 103,
-  "top": 444,
-  "bottom": 700,
-  "left": 185,
-  "right": 515,
+  "n": 365,
+  "pool": 368,
+  "sources": {
+   "grammar": {
+    "n": 364,
+    "pool": 367
+   },
+   "zost": {
+    "n": 1,
+    "pool": 1
+   }
+  },
+  "top": 446,
+  "bottom": 702,
+  "left": 186,
+  "right": 514,
   "height": 256,
-  "width": 330,
-  "desc": 0
+  "width": 328,
+  "desc": 2
  },
  "iota": {
-  "n": 305,
-  "pool": 1353,
-  "top": 444,
+  "n": 576,
+  "pool": 4558,
+  "sources": {
+   "grammar": {
+    "n": 499,
+    "pool": 4478
+   },
+   "zost": {
+    "n": 77,
+    "pool": 80
+   }
+  },
+  "top": 446,
   "bottom": 700,
-  "left": 308,
-  "right": 391,
-  "height": 256,
-  "width": 83,
+  "left": 306,
+  "right": 394,
+  "height": 254,
+  "width": 88,
   "desc": 0
  },
  "kappa": {
-  "n": 364,
-  "pool": 441,
+  "n": 523,
+  "pool": 1734,
+  "sources": {
+   "grammar": {
+    "n": 498,
+    "pool": 1709
+   },
+   "zost": {
+    "n": 25,
+    "pool": 25
+   }
+  },
   "top": 444,
-  "bottom": 700,
-  "left": 224,
-  "right": 474,
-  "height": 256,
-  "width": 250,
-  "desc": 0
+  "bottom": 699,
+  "left": 221,
+  "right": 479,
+  "height": 255,
+  "width": 258,
+  "desc": -1
  },
  "lambda": {
-  "n": 216,
-  "pool": 307,
-  "top": 444,
-  "bottom": 700,
-  "left": 199,
-  "right": 500,
-  "height": 256,
-  "width": 301,
-  "desc": 0
+  "n": 530,
+  "pool": 1252,
+  "sources": {
+   "grammar": {
+    "n": 498,
+    "pool": 1220
+   },
+   "zost": {
+    "n": 32,
+    "pool": 32
+   }
+  },
+  "top": 443,
+  "bottom": 698,
+  "left": 195,
+  "right": 505,
+  "height": 255,
+  "width": 310,
+  "desc": -2
  },
  "mu": {
-  "n": 444,
-  "pool": 734,
+  "n": 587,
+  "pool": 3231,
+  "sources": {
+   "grammar": {
+    "n": 497,
+    "pool": 3141
+   },
+   "zost": {
+    "n": 90,
+    "pool": 90
+   }
+  },
   "top": 444,
-  "bottom": 697,
-  "left": 204,
-  "right": 496,
-  "height": 253,
-  "width": 292,
-  "desc": -3
+  "bottom": 698,
+  "left": 202,
+  "right": 497,
+  "height": 254,
+  "width": 295,
+  "desc": -2
  },
  "nu": {
-  "n": 435,
-  "pool": 2606,
-  "top": 448,
-  "bottom": 700,
+  "n": 679,
+  "pool": 10465,
+  "sources": {
+   "grammar": {
+    "n": 499,
+    "pool": 10285
+   },
+   "zost": {
+    "n": 180,
+    "pool": 180
+   }
+  },
+  "top": 444,
+  "bottom": 699,
   "left": 226,
   "right": 474,
-  "height": 252,
+  "height": 255,
   "width": 248,
-  "desc": 0
+  "desc": -1
  },
  "ksi": {
-  "n": 10,
-  "pool": 11,
-  "top": 403,
-  "bottom": 729,
+  "n": 60,
+  "pool": 60,
+  "sources": {
+   "grammar": {
+    "n": 59,
+    "pool": 59
+   },
+   "zost": {
+    "n": 1,
+    "pool": 1
+   }
+  },
+  "top": 406,
+  "bottom": 735,
   "left": 226,
-  "right": 478,
-  "height": 326,
-  "width": 252,
-  "desc": 29
+  "right": 476,
+  "height": 329,
+  "width": 250,
+  "desc": 35
  },
  "omicron": {
-  "n": 287,
-  "pool": 2366,
-  "top": 444,
-  "bottom": 700,
-  "left": 194,
+  "n": 663,
+  "pool": 9543,
+  "sources": {
+   "grammar": {
+    "n": 493,
+    "pool": 9371
+   },
+   "zost": {
+    "n": 170,
+    "pool": 172
+   }
+  },
+  "top": 440,
+  "bottom": 703,
+  "left": 193,
   "right": 506,
-  "height": 256,
-  "width": 312,
-  "desc": 0
+  "height": 263,
+  "width": 313,
+  "desc": 3
  },
  "pi": {
-  "n": 358,
-  "pool": 1111,
-  "top": 448,
-  "bottom": 700,
-  "left": 196,
-  "right": 504,
-  "height": 252,
-  "width": 308,
-  "desc": 0
+  "n": 576,
+  "pool": 4547,
+  "sources": {
+   "grammar": {
+    "n": 498,
+    "pool": 4468
+   },
+   "zost": {
+    "n": 78,
+    "pool": 79
+   }
+  },
+  "top": 446,
+  "bottom": 701,
+  "left": 195,
+  "right": 506,
+  "height": 255,
+  "width": 311,
+  "desc": 1
  },
  "rho": {
-  "n": 378,
-  "pool": 441,
-  "top": 452,
-  "bottom": 807,
-  "left": 240,
-  "right": 460,
-  "height": 355,
-  "width": 220,
-  "desc": 107
+  "n": 547,
+  "pool": 1373,
+  "sources": {
+   "grammar": {
+    "n": 498,
+    "pool": 1324
+   },
+   "zost": {
+    "n": 49,
+    "pool": 49
+   }
+  },
+  "top": 445,
+  "bottom": 809,
+  "left": 236,
+  "right": 463,
+  "height": 364,
+  "width": 227,
+  "desc": 109
  },
  "sigma": {
-  "n": 239,
-  "pool": 820,
-  "top": 444,
-  "bottom": 700,
-  "left": 214,
-  "right": 486,
-  "height": 256,
-  "width": 272,
-  "desc": 0
+  "n": 527,
+  "pool": 3575,
+  "sources": {
+   "grammar": {
+    "n": 489,
+    "pool": 3537
+   },
+   "zost": {
+    "n": 38,
+    "pool": 38
+   }
+  },
+  "top": 448,
+  "bottom": 703,
+  "left": 209,
+  "right": 491,
+  "height": 255,
+  "width": 282,
+  "desc": 3
  },
  "tau": {
-  "n": 361,
-  "pool": 1463,
-  "top": 444,
-  "bottom": 700,
-  "left": 201,
-  "right": 499,
-  "height": 256,
-  "width": 298,
-  "desc": 0
+  "n": 571,
+  "pool": 6514,
+  "sources": {
+   "grammar": {
+    "n": 498,
+    "pool": 6438
+   },
+   "zost": {
+    "n": 73,
+    "pool": 76
+   }
+  },
+  "top": 452,
+  "bottom": 699,
+  "left": 203,
+  "right": 500,
+  "height": 247,
+  "width": 297,
+  "desc": -1
  },
  "upsilon": {
-  "n": 381,
-  "pool": 1359,
-  "top": 444,
-  "bottom": 805,
-  "left": 204,
-  "right": 498,
-  "height": 361,
-  "width": 294,
-  "desc": 105
- },
- "phi": {
-  "n": 18,
-  "pool": 18,
-  "top": 334,
+  "n": 626,
+  "pool": 4846,
+  "sources": {
+   "grammar": {
+    "n": 500,
+    "pool": 4720
+   },
+   "zost": {
+    "n": 126,
+    "pool": 126
+   }
+  },
+  "top": 447,
   "bottom": 807,
-  "left": 166,
-  "right": 534,
-  "height": 473,
-  "width": 368,
+  "left": 195,
+  "right": 505,
+  "height": 360,
+  "width": 310,
   "desc": 107
  },
+ "phi": {
+  "n": 93,
+  "pool": 93,
+  "sources": {
+   "grammar": {
+    "n": 90,
+    "pool": 90
+   },
+   "zost": {
+    "n": 3,
+    "pool": 3
+   }
+  },
+  "top": 330,
+  "bottom": 808,
+  "left": 164,
+  "right": 535,
+  "height": 478,
+  "width": 371,
+  "desc": 108
+ },
  "khi": {
-  "n": 51,
-  "pool": 82,
-  "top": 444,
+  "n": 375,
+  "pool": 388,
+  "sources": {
+   "grammar": {
+    "n": 373,
+    "pool": 386
+   },
+   "zost": {
+    "n": 2,
+    "pool": 2
+   }
+  },
+  "top": 443,
   "bottom": 700,
-  "left": 227,
-  "right": 478,
-  "height": 256,
-  "width": 251,
+  "left": 228,
+  "right": 475,
+  "height": 257,
+  "width": 247,
   "desc": 0
  },
  "psi": {
-  "n": 12,
-  "pool": 13,
+  "n": 33,
+  "pool": 33,
+  "sources": {
+   "grammar": {
+    "n": 32,
+    "pool": 32
+   },
+   "zost": {
+    "n": 1,
+    "pool": 1
+   }
+  },
   "top": 322,
-  "bottom": 807,
-  "left": 172,
-  "right": 528,
-  "height": 485,
-  "width": 356,
-  "desc": 107
+  "bottom": 809,
+  "left": 164,
+  "right": 534,
+  "height": 487,
+  "width": 370,
+  "desc": 109
  },
  "omega": {
-  "n": 367,
-  "pool": 537,
+  "n": 558,
+  "pool": 2480,
+  "sources": {
+   "grammar": {
+    "n": 496,
+    "pool": 2418
+   },
+   "zost": {
+    "n": 62,
+    "pool": 62
+   }
+  },
   "top": 444,
   "bottom": 700,
-  "left": 134,
-  "right": 566,
+  "left": 128,
+  "right": 570,
   "height": 256,
-  "width": 432,
+  "width": 442,
   "desc": 0
  },
  "shai": {
-  "n": 149,
-  "pool": 223,
-  "top": 449,
-  "bottom": 810,
-  "left": 134,
-  "right": 566,
-  "height": 361,
-  "width": 432,
-  "desc": 110
+  "n": 539,
+  "pool": 1385,
+  "sources": {
+   "grammar": {
+    "n": 493,
+    "pool": 1339
+   },
+   "zost": {
+    "n": 46,
+    "pool": 46
+   }
+  },
+  "top": 444,
+  "bottom": 811,
+  "left": 131,
+  "right": 568,
+  "height": 367,
+  "width": 437,
+  "desc": 111
  },
  "fai": {
-  "n": 386,
-  "pool": 474,
-  "top": 444,
-  "bottom": 802,
-  "left": 222,
-  "right": 478,
-  "height": 358,
-  "width": 256,
-  "desc": 102
+  "n": 543,
+  "pool": 1902,
+  "sources": {
+   "grammar": {
+    "n": 500,
+    "pool": 1859
+   },
+   "zost": {
+    "n": 43,
+    "pool": 43
+   }
+  },
+  "top": 442,
+  "bottom": 808,
+  "left": 220,
+  "right": 481,
+  "height": 366,
+  "width": 261,
+  "desc": 108
  },
  "hori": {
-  "n": 352,
-  "pool": 495,
-  "top": 444,
-  "bottom": 807,
-  "left": 222,
-  "right": 475,
-  "height": 363,
-  "width": 253,
-  "desc": 107
+  "n": 549,
+  "pool": 2688,
+  "sources": {
+   "grammar": {
+    "n": 495,
+    "pool": 2633
+   },
+   "zost": {
+    "n": 54,
+    "pool": 55
+   }
+  },
+  "top": 446,
+  "bottom": 810,
+  "left": 221,
+  "right": 479,
+  "height": 364,
+  "width": 258,
+  "desc": 110
  },
  "djandja": {
-  "n": 185,
-  "pool": 270,
-  "top": 444,
-  "bottom": 730,
-  "left": 165,
-  "right": 535,
-  "height": 286,
-  "width": 370,
-  "desc": 30
+  "n": 515,
+  "pool": 1184,
+  "sources": {
+   "grammar": {
+    "n": 500,
+    "pool": 1168
+   },
+   "zost": {
+    "n": 15,
+    "pool": 16
+   }
+  },
+  "top": 442,
+  "bottom": 735,
+  "left": 163,
+  "right": 538,
+  "height": 293,
+  "width": 375,
+  "desc": 35
  },
  "kyima": {
-  "n": 108,
-  "pool": 154,
-  "top": 342,
+  "n": 501,
+  "pool": 533,
+  "sources": {
+   "grammar": {
+    "n": 490,
+    "pool": 522
+   },
+   "zost": {
+    "n": 11,
+    "pool": 11
+   }
+  },
+  "top": 339,
   "bottom": 700,
-  "left": 207,
-  "right": 493,
-  "height": 358,
-  "width": 286,
+  "left": 206,
+  "right": 494,
+  "height": 361,
+  "width": 288,
   "desc": 0
  },
  "ti": {
-  "n": 22,
-  "pool": 31,
-  "top": 337,
-  "bottom": 807,
-  "left": 177,
-  "right": 523,
-  "height": 470,
-  "width": 346,
-  "desc": 107
+  "n": 160,
+  "pool": 160,
+  "sources": {
+   "grammar": {
+    "n": 151,
+    "pool": 151
+   },
+   "zost": {
+    "n": 9,
+    "pool": 9
+   }
+  },
+  "top": 332,
+  "bottom": 808,
+  "left": 179,
+  "right": 520,
+  "height": 476,
+  "width": 341,
+  "desc": 108
+ },
+ "dhyphen": {
+  "n": 454,
+  "pool": 686,
+  "sources": {
+   "grammar": {
+    "n": 454,
+    "pool": 686
+   }
+  },
+  "top": 484,
+  "bottom": 654,
+  "left": 241,
+  "right": 460,
+  "height": 170,
+  "width": 219,
+  "desc": -46
  }
 }

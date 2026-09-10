@@ -5,7 +5,7 @@ from PIL import Image
 from scipy import ndimage
 TARGET=256
 over, hyph = [], []
-for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["bars_glob"])))[:8]:
+for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["bars_glob"]))):
     a=np.asarray(Image.open(p).convert("L")); ink=a<128
     lab,n=ndimage.label(ink); objs=ndimage.find_objects(lab)
     hs=[o[0].stop-o[0].start for o in objs if 8<=o[0].stop-o[0].start<=200]
@@ -39,6 +39,8 @@ for nm,L in (("overline",over),("hyphen",hyph)):
           f"length {np.median([r['ln'] for r in L]):6.1f}  height above baseline {np.median([r['rel'] for r in L]):6.1f}")
 # word space: gaps larger than the intra-word cutoff
 insts=pickle.load(open(os.path.join(face.WORK, "instances.pkl"),"rb"))
+MS = face.CFG.get("metrics_source")
+if MS: insts = [g for g in insts if g.get("source","") == MS]
 lines={}
 for g in insts: lines.setdefault((g["page"],g["base"]),[]).append(g)
 ws=[]
