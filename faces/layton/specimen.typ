@@ -49,11 +49,14 @@
 
 #v(10pt)
 
-== Superlineation and morph division
+== Superlineation, morph division, and the prepersonal sign
 
 The supralinear stroke is #raw("U+0305") (combining overline); Layton's morph-dividing
-hyphen is the ordinary #raw("U+002D"), and his prepersonal-state sign ⸗ is
-#raw("U+2E17") (double oblique hyphen): ⲥⲱⲧⲡ-, ⲥⲟⲧⲡ⸗.
+hyphen is the ordinary #raw("U+002D"). His prepersonal-state sign ⸗ is #raw("U+2E17")
+(double oblique hyphen), traced from the glossary like the letters.
+
+#v(4pt)
+#cop(16pt, "ⲥⲱⲧⲡ-  ⲥⲟⲧⲡ⸗   ϩⲏⲧ⸗   ⲛⲁ⸗   ⲙ̅ⲙⲟ⸗   ⲣⲱ⸗")
 
 #v(4pt)
 #cop(14pt, "ⲁϥ-ϣⲁϫⲉ ⲛ̅ⲙⲙⲁ-ⲩ ϫⲉ-ⲙ̅ⲡⲣ̅-ⲣ̅-ϩⲟⲧⲉ")
