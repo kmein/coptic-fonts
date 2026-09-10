@@ -15,7 +15,7 @@ import os
 SIGMA    = float(os.environ.get("SIGMA", 4.0))   # smoothing of the averaged template before tracing
 CONTRAST = float(os.environ.get("CONTRAST", 0))  # px of x-growth / y-shrink: widens thick/thin (0 = as printed)
 WEIGHT   = float(os.environ.get("WEIGHT", 0))    # px uniform stroke change (changes contrast)
-LIGHTEN  = float(os.environ.get("LIGHTEN", 0.16))   # fraction of stroke width removed, contrast preserved
+LIGHTEN  = float(os.environ.get("LIGHTEN", face.CFG.get("lighten", 0.16)))  # fraction of stroke width removed, contrast preserved
 OUT      = os.environ.get("OUT", face.CFG["out"])
 MONO     = face.CFG["monospace"]
 LETTER_H = 620                      # letter height in font units
@@ -97,7 +97,7 @@ GAP = sp["gap"]
 shapes, widths, LSB = {}, {}, {}
 for name in S.LETTERS:
     if name not in tpl: continue
-    contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST, weight=WEIGHT, lighten=LIGHTEN), name, outdir=os.path.join(face.WORK, "trace"), opttol="0.3", alphamax="1.2")
+    contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST, weight=WEIGHT, lighten=LIGHTEN), name, outdir=os.path.join(face.WORK, "trace", OUT), opttol="0.3", alphamax="1.2")
     contours = TR.polish(contours, flat_tol=0.6, angle_tol=1.2, snap_tol=1.2, min_len=25)
     xs = [p[0] for c in contours for seg in c for p in seg[1:]]
     ink_l, ink_r = min(xs), max(xs); w = ink_r - ink_l

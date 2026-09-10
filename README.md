@@ -6,7 +6,7 @@ scans rather than from any font file. One pipeline in `src/`, one directory per 
 | face | source | status |
 |---|---|---|
 | [`faces/layton/`](faces/layton/README.md) — **Layton Coptic** | Bentley Layton, *A Coptic Grammar* (Harrassowitz 2000) | v1.2 |
-| `faces/lambdin/` — **Lambdin Coptic** | Thomas Lambdin, *Introduction to Sahidic Coptic* (Mercer 1983) | in progress |
+| [`faces/lambdin/`](faces/lambdin/README.md) — **Lambdin Coptic** | Thomas Lambdin, *Introduction to Sahidic Coptic* (Mercer 1983) | v1.0 |
 
 Each face directory holds the font files, a specimen (`specimen.typ` / `.pdf`), a README
 with provenance, metrics and verification, and `data/` with the reference alphabet and
