@@ -1,4 +1,4 @@
-# coptic-font
+# coptic-fonts
 
 Digital revivals of Coptic types from printed books, traced from averaged 600 dpi page
 scans rather than from any font file. One pipeline in `src/`, one directory per face.
@@ -22,6 +22,25 @@ root, in order: `segref.py` (reference alphabet from the book's own table) →
 `overline.py` (metrics measured from the printed setting) → `build_font.py` (refine,
 trace, assemble OTF + TTF) → `fontforge -lang=py -script src/simplify.py <otf> 4`.
 `score4.py` scores a font against the reference alphabet.
+
+## Installing
+
+With Nix, the flake exposes `layton-coptic`, `lambdin-coptic` and a `default` that joins
+both, each installing into `share/fonts/{opentype,truetype}`:
+
+```
+nix build github:kmein/coptic-fonts            # result/share/fonts/...
+nix profile install github:kmein/coptic-fonts#layton-coptic
+```
+
+or, on NixOS, `fonts.packages = [ inputs.coptic-fonts.packages.${system}.default ];`.
+Without Nix, copy the `.otf` or `.ttf` from `faces/<face>/` into your font directory.
+`nix develop` gives a shell with everything the pipeline needs.
+
+## Licence
+
+SIL Open Font License 1.1 — see `LICENSE`. Reserved Font Names: Layton Coptic,
+Lambdin Coptic.
 
 ## Tooling
 
