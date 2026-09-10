@@ -1,11 +1,12 @@
-import pickle, json, glob
+import pickle, json, glob, os
+import face
 import numpy as np
 from PIL import Image
 from scipy import ndimage
 import score as S
 TARGET = 256
 
-insts = pickle.load(open("instances.pkl","rb"))
+insts = pickle.load(open(os.path.join(face.WORK, "instances.pkl"),"rb"))
 lines = {}
 for g in insts: lines.setdefault((g["page"], g["base"]), []).append(g)
 adv, gaps = {}, []
@@ -25,11 +26,14 @@ for k,v in adv.items():
 for k in S.LETTERS:
     if k in out: print(f"  {k:9s} advance {out[k]['advance']:6.1f}  (n={out[k]['n']})")
     else: print(f"  {k:9s} advance   --   (no pairs)")
-json.dump(dict(gap=gap_med, adv=out), open("spacing.json","w"), indent=1)
+pitch = float(np.median([a for v in adv.values() for a in v]))
+spread = float(np.std([o["advance"] for o in out.values()]))
+print(f"pitch (median of all pair advances) {pitch:.1f}; std of per-letter medians {spread:.1f} -> {'fixed pitch' if spread < 8 else 'proportional'}")
+json.dump(dict(gap=gap_med, adv=out, pitch=pitch, spread=spread), open(os.path.join(face.DATA, "spacing.json"),"w"), indent=1)
 
 # --- bars: supralinear stroke and hyphen, measured from the pages
 th, ln, above, mid = [], [], [], []
-for p in sorted(glob.glob("pages/p-46*.png"))[:6]:
+for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["spacing_glob"])))[:6]:
     a = np.asarray(Image.open(p).convert("L")); ink = a<128
     lab,n = ndimage.label(ink); objs = ndimage.find_objects(lab)
     hs = [o[0].stop-o[0].start for o in objs if 8<=o[0].stop-o[0].start<=200]
@@ -44,4 +48,4 @@ for p in sorted(glob.glob("pages/p-46*.png"))[:6]:
 print(f"\nbars: n={len(th)}  thickness median {np.median(th):.1f}px "
       f"({np.median(th)/hmed*TARGET:.1f} units)  length median {np.median(ln)*TARGET:.0f} units")
 json.dump(dict(thickness_units=float(np.median(th)/hmed*TARGET),
-               length_units=float(np.median(ln)*TARGET)), open("bars.json","w"), indent=1)
+               length_units=float(np.median(ln)*TARGET)), open(os.path.join(face.DATA, "bars.json"),"w"), indent=1)

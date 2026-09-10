@@ -1,5 +1,6 @@
 """Subpixel-align and average all instances of each letter -> superresolved templates."""
-import pickle, json
+import pickle, json, os
+import face
 import numpy as np
 from PIL import Image
 import score as S
@@ -42,7 +43,7 @@ def average(insts, iters=2):
     return cur, len(used)
 
 if __name__ == "__main__":
-    insts = pickle.load(open("instances.pkl","rb"))
+    insts = pickle.load(open(os.path.join(face.WORK, "instances.pkl"),"rb"))
     by = {}
     for g in insts: by.setdefault(g["letter"], []).append(g)
     rng = np.random.default_rng(0)
@@ -65,5 +66,5 @@ if __name__ == "__main__":
                           desc=int(ys.max()+1-BASE))
         print(f"  {name:9s} n={n:4d}/{len(by[name]):5d}  h={meta[name]['height']:3d} w={meta[name]['width']:3d} "
               f"desc={meta[name]['desc']:+4d}", flush=True)
-    np.savez_compressed("templates.npz", **tpl)
-    json.dump(meta, open("template_meta.json","w"), indent=1)
+    np.savez_compressed(os.path.join(face.DATA, "templates.npz"), **tpl)
+    json.dump(meta, open(os.path.join(face.DATA, "template_meta.json"),"w"), indent=1)

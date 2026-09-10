@@ -1,10 +1,11 @@
-import glob, json, pickle
+import glob, json, pickle, os
+import face
 import numpy as np
 from PIL import Image
 from scipy import ndimage
 TARGET=256
 over, hyph = [], []
-for p in sorted(glob.glob("pages/p-4*.png"))[:8]:
+for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["bars_glob"])))[:8]:
     a=np.asarray(Image.open(p).convert("L")); ink=a<128
     lab,n=ndimage.label(ink); objs=ndimage.find_objects(lab)
     hs=[o[0].stop-o[0].start for o in objs if 8<=o[0].stop-o[0].start<=200]
@@ -37,7 +38,7 @@ for nm,L in (("overline",over),("hyphen",hyph)):
     print(f"{nm:9s} n={len(L):5d}  thickness {np.median([r['th'] for r in L]):5.1f}  "
           f"length {np.median([r['ln'] for r in L]):6.1f}  height above baseline {np.median([r['rel'] for r in L]):6.1f}")
 # word space: gaps larger than the intra-word cutoff
-insts=pickle.load(open("instances.pkl","rb"))
+insts=pickle.load(open(os.path.join(face.WORK, "instances.pkl"),"rb"))
 lines={}
 for g in insts: lines.setdefault((g["page"],g["base"]),[]).append(g)
 ws=[]
@@ -53,4 +54,4 @@ json.dump(dict(overline=dict(th=float(np.median([r['th'] for r in over])),
                hyphen=dict(th=float(np.median([r['th'] for r in hyph])),
                            ln=float(np.median([r['ln'] for r in hyph])),
                            y=float(np.median([r['rel'] for r in hyph]))),
-               word_gap=float(np.median(ws))), open("bars.json","w"), indent=1)
+               word_gap=float(np.median(ws))), open(os.path.join(face.DATA, "bars.json"),"w"), indent=1)

@@ -8,6 +8,7 @@ from fontTools.pens.cu2quPen import Cu2QuPen
 import trace as TR
 import refine as RF
 import score as S
+import face
 
 BASE, TARGET = 700, 256
 import os
@@ -15,12 +16,14 @@ SIGMA    = float(os.environ.get("SIGMA", 4.0))   # smoothing of the averaged tem
 CONTRAST = float(os.environ.get("CONTRAST", 0))  # px of x-growth / y-shrink: widens thick/thin (0 = as printed)
 WEIGHT   = float(os.environ.get("WEIGHT", 0))    # px uniform stroke change (changes contrast)
 LIGHTEN  = float(os.environ.get("LIGHTEN", 0.16))   # fraction of stroke width removed, contrast preserved
-OUT      = os.environ.get("OUT", "LaytonCoptic-Regular")
+OUT      = os.environ.get("OUT", face.CFG["out"])
+MONO     = face.CFG["monospace"]
 LETTER_H = 620                      # letter height in font units
 K = LETTER_H / TARGET
 UPEM = 1000
-FAMILY, STYLE = "Layton Coptic", "Regular"
-VERSION = "1.200"
+FAMILY, STYLE = face.CFG["family"], "Regular"
+VERSION = face.CFG.get("version", "1.000")
+PSFAM = face.CFG["ps"]
 
 CP = {   # letter -> (small, capital) codepoints; the type is unicase, one outline serves both
  "alpha":(0x2C81,0x2C80), "beta":(0x2C83,0x2C82), "gamma":(0x2C85,0x2C84), "delta":(0x2C87,0x2C86),
@@ -87,20 +90,23 @@ def rect(pen, x0,y0,x1,y1):
     pen.lineTo((round(x1),round(y1))); pen.lineTo((round(x0),round(y1))); pen.closePath()
 
 # ---------- gather geometry ----------
-tpl = np.load("templates.npz")
-meta = json.load(open("template_meta.json"))
-sp = json.load(open("spacing.json")); bars = json.load(open("bars.json"))
+tpl = np.load(os.path.join(face.DATA, "templates.npz"))
+meta = json.load(open(os.path.join(face.DATA, "template_meta.json")))
+sp = json.load(open(os.path.join(face.DATA, "spacing.json"))); bars = json.load(open(os.path.join(face.DATA, "bars.json")))
 GAP = sp["gap"]
 shapes, widths, LSB = {}, {}, {}
 for name in S.LETTERS:
     if name not in tpl: continue
-    contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST, weight=WEIGHT, lighten=LIGHTEN), name, outdir="trace_"+OUT, opttol="0.3", alphamax="1.2")
+    contours,_ = TR.trace_template(RF.refine(tpl[name], sigma=SIGMA, contrast=CONTRAST, weight=WEIGHT, lighten=LIGHTEN), name, outdir=os.path.join(face.WORK, "trace"), opttol="0.3", alphamax="1.2")
     contours = TR.polish(contours, flat_tol=0.6, angle_tol=1.2, snap_tol=1.2, min_len=25)
     xs = [p[0] for c in contours for seg in c for p in seg[1:]]
     ink_l, ink_r = min(xs), max(xs); w = ink_r - ink_l
     a = sp["adv"].get(name)
-    adv = a["advance"] if (a and a["n"] >= 20) else w + GAP
-    adv = max(adv, w + 0.45*GAP)
+    if MONO:
+        adv = sp["pitch"]                      # typewriter: every glyph fills one cell
+    else:
+        adv = a["advance"] if (a and a["n"] >= 20) else w + GAP
+        adv = max(adv, w + 0.45*GAP)
     lsb = (adv - w)/2.0
     shapes[name] = (contours, ink_l - lsb)
     widths[name] = adv; LSB[name] = lsb
@@ -115,8 +121,11 @@ for n in shapes:
 ov, hy = bars["overline"], bars["hyphen"]
 adv_units = {".notdef": round(0.5*LETTER_H), "space": round(TARGET*K),
              "hyphen": round((hy["ln"]+GAP)*K), "uni0305": 0}
+if MONO:
+    cell = round(sp["pitch"]*K)
+    adv_units.update({".notdef": cell, "space": cell, "hyphen": cell})
 for n in shapes: adv_units[GNAME[n]] = round(widths[n]*K)
-xmin = {".notdef":60, "space":0, "hyphen":round(GAP/2*K),
+xmin = {".notdef":60, "space":0, "hyphen":round(((sp["pitch"]-hy["ln"])/2 if MONO else GAP/2)*K),
         "uni0305":round((-typ_adv/2-ov["ln"]/2)*K)}
 for n in shapes: xmin[GNAME[n]] = round(LSB[n]*K)
 
@@ -130,7 +139,8 @@ def build(pens_factory, finish):
             rect(pen, 110, 50, adv_units[".notdef"]-110, LETTER_H-50)
         elif gname == "space": pass
         elif gname == "hyphen":
-            x0 = GAP/2*K; rect(pen, x0, (hy["y"]-hy["th"]/2)*K, x0+hy["ln"]*K, (hy["y"]+hy["th"]/2)*K)
+            x0 = ((sp["pitch"]-hy["ln"])/2 if MONO else GAP/2)*K
+            rect(pen, x0, (hy["y"]-hy["th"]/2)*K, x0+hy["ln"]*K, (hy["y"]+hy["th"]/2)*K)
         elif gname == "uni0305":
             cx = -typ_adv/2*K
             rect(pen, cx-ov["ln"]/2*K, ov["y"]*K, cx+ov["ln"]/2*K, (ov["y"]+ov["th"])*K)
@@ -141,12 +151,10 @@ def build(pens_factory, finish):
     return glyphs
 
 names = dict(familyName=FAMILY, styleName=STYLE, uniqueFontIdentifier=f"{FAMILY} {VERSION}",
-             fullName=f"{FAMILY} {STYLE}", version=VERSION, psName=f"LaytonCoptic-{STYLE}",
+             fullName=f"{FAMILY} {STYLE}", version=VERSION, psName=f"{PSFAM}-{STYLE}",
              designer="Digitised from printed specimens",
-             description=("Revival of the Coptic type used in Bentley Layton's A Coptic Grammar "
-                          "(Harrassowitz 2000) and Coptic Gnostic Chrestomathy (Peeters 2004). "
-                          "Outlines traced from averaged 600 dpi page scans; metrics measured from "
-                          "the printed setting."))
+             description=face.CFG.get("description", "Revival traced from averaged 600 dpi page scans; "
+                                      "metrics measured from the printed setting."))
 def setup(fb, glyphs, is_ttf):
     fb.setupGlyphOrder(order); fb.setupCharacterMap(cmap)
     if is_ttf: fb.setupGlyf(glyphs)
@@ -160,7 +168,8 @@ def setup(fb, glyphs, is_ttf):
     fb.setupOS2(sTypoAscender=800, sTypoDescender=-270, sTypoLineGap=200,
                 usWinAscent=1000, usWinDescent=270, sCapHeight=LETTER_H, sxHeight=LETTER_H,
                 achVendID="LYTN", fsType=0)
-    fb.setupPost(isFixedPitch=0)
+    fb.setupPost(isFixedPitch=1 if MONO else 0)
+    if MONO: fb.font["OS/2"].panose.bProportion = 9
 
 # OTF (CFF, cubic)
 cs={}
@@ -169,8 +178,8 @@ def cff_pen(g):
     return T2CharStringPen(adv_units[g], None)
 glyphs = build(cff_pen, lambda pen,g: pen.getCharString())
 setup(fb, glyphs, False)
-fb.save(OUT+".otf")
-print("wrote "+OUT+".otf")
+fb.save(os.path.join(face.DIR, OUT+".otf"))
+print("wrote "+os.path.join(face.DIR, OUT+".otf"))
 
 # TTF (quadratic)
 fb2 = FontBuilder(UPEM, isTTF=True)
@@ -183,5 +192,5 @@ def tt_finish(pen, g):
 CFF_MODE[0]=False
 glyphs2 = build(tt_pen, tt_finish)
 setup(fb2, glyphs2, True)
-fb2.save(OUT+".ttf")
-print("wrote "+OUT+".ttf")
+fb2.save(os.path.join(face.DIR, OUT+".ttf"))
+print("wrote "+os.path.join(face.DIR, OUT+".ttf"))

@@ -1,4 +1,7 @@
 # harvest intermediates (page scans and per-instance data are large and regenerable)
 pages/
+faces/*/pages/
+faces/*/work/
 *.pkl
 trace/
+__pycache__/

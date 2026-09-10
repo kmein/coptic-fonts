@@ -1,5 +1,6 @@
 """Harvest glyph instances of Layton's Coptic type from 600dpi page scans."""
-import glob, pickle, sys
+import glob, pickle, sys, os
+import face
 import numpy as np
 from PIL import Image
 from scipy import ndimage
@@ -62,7 +63,7 @@ def page_glyphs(path):
 
 if __name__ == "__main__":
     allg=[]
-    for p in sorted(glob.glob("pages/*-*.png")):
+    for p in sorted(glob.glob(os.path.join(face.PAGES, "*.png"))):
         g = page_glyphs(p)
         allg += g
         pass
@@ -70,4 +71,4 @@ if __name__ == "__main__":
     from collections import Counter
     c = Counter(g["letter"] for g in allg)
     print("per letter:", {k:c[k] for k in LETTERS})
-    pickle.dump(allg, open("instances.pkl","wb"))
+    pickle.dump(allg, open(os.path.join(face.WORK, "instances.pkl"),"wb"))

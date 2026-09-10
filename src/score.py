@@ -1,4 +1,5 @@
 import os, json, glob, hashlib, sys
+import face
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from scipy import ndimage
@@ -75,7 +76,7 @@ def render(fontpath, cps, px=300):
 
 # ---- reference ----
 ref, ref_raw = {}, {}
-for p in sorted(glob.glob("ref/*.png")):
+for p in sorted(glob.glob(os.path.join(face.REF, "*.png"))):
     idx, name = os.path.basename(p)[:-4].split("_",1)
     m = np.asarray(Image.open(p).convert("L")) < 128
     tm = trim(m); ref_raw[name] = tm.shape

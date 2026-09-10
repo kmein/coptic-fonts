@@ -1,10 +1,11 @@
-import glob, json
+import glob, json, os
+import face
 import numpy as np
 from PIL import Image
 from scipy import ndimage
 TARGET=256
 gaps, bottoms, ths, lns = [], [], [], []
-for p in sorted(glob.glob("pages/p-4*.png"))[:10]:
+for p in sorted(glob.glob(os.path.join(face.PAGES, face.CFG["bars_glob"])))[:10]:
     a=np.asarray(Image.open(p).convert("L")); ink=a<128
     lab,n=ndimage.label(ink); objs=ndimage.find_objects(lab)
     hs=[o[0].stop-o[0].start for o in objs if 8<=o[0].stop-o[0].start<=200]
@@ -31,7 +32,7 @@ print(f"  clearance above letter top : {np.median(gaps):5.1f} units")
 print(f"  bar bottom above baseline  : {np.median(bottoms):5.1f} units  (letter height 256)")
 print(f"  thickness                  : {np.median(ths):5.1f} units")
 print(f"  length                      : {np.median(lns):5.1f} units")
-b=json.load(open("bars.json"))
+b=json.load(open(os.path.join(face.DATA, "bars.json")))
 b["overline"]=dict(th=float(np.median(ths)), ln=float(np.median(lns)),
                    y=float(np.median(bottoms)), clearance=float(np.median(gaps)))
-json.dump(b, open("bars.json","w"), indent=1)
+json.dump(b, open(os.path.join(face.DATA, "bars.json"),"w"), indent=1)
